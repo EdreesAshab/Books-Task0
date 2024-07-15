@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Favorite</title>
+    <link rel="stylesheet" href="assets/styles/app.css" />
+    <!-- <script src="assets/scripts/app.js" defer></script> -->
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div id="backdrop"></div>
+    <div class="modal" id="add-modal">
+      <div class="modal__content">
+        <label for="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          name="title"
+          maxlength="25"
+          placeholder=""
+        />
+        <label for="image-url">Image URL</label>
+        <input id="image-url" type="text" name="image-url" placeholder="" />
+        <label for="rating">Your Rating</label>
+        <input
+          maxlength="1"
+          oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+          type="number"
+          step="1"
+          max="5"
+          min="1"
+          name="rating"
+          id="rating"
+          placeholder=""
+        />
+      </div>
+      <div class="modal__actions">
+        <button id="cancel" onclick="btnclose()" class="btn btn--passive">
+          Cancel
+        </button>
+        <button id="Add" class="btn btn--success" onclick="additem()">
+          Add
+        </button>
+      </div>
+    </div>
+    <div class="modal" id="delete-modal">
+      <h2 class="modal__title">Are you sure?</h2>
+      <p class="modal__content">
+        Are you sure you want to delete this item? This action can't be made
+        undone!
+      </p>
+      <div class="modal__actions">
+        <button class="btn btn--passive">No (Cancel)</button>
+        <button class="btn btn--danger">Yes</button>
+      </div>
+    </div>
+
+    <header>
+      <h1>Favorite Books</h1>
+      <button id="deleteBooks" onclick="delclick()">Delete Books</button>
+      <button id="addBook" onclick="btnclick()">ADD BOOK</button>
+    </header>
+
+    <main>
+      <section id="entry-text" class="card">
+        <p>List Currently Empty!!!</p>
+      </section>
+      <ul id="book-list"></ul>
+      <div id="pagination"></div>
+    </main>
+  </body>
+</html>
