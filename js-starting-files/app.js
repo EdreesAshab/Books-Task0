@@ -59,10 +59,10 @@ searchBtn.addEventListener('click', () => {
   if (ratingFilterInput.value === '') ratingFilterInput.value = 'All';
 
   if (
-    ratingFilterInput.value.includes('-') &&
-    ratingFilterInput.value.split('-').length === 2
+    ratingFilterInput.value.includes(':') &&
+    ratingFilterInput.value.split(':').length === 2
   ) {
-    [startRate, endRate] = ratingFilterInput.value.split('-');
+    [startRate, endRate] = ratingFilterInput.value.split(':');
 
     if (isNaN(startRate) || startRate < 1) startRate = 1;
     if (isNaN(endRate) || endRate > 5) endRate = 5;
@@ -71,7 +71,13 @@ searchBtn.addEventListener('click', () => {
     endRate = Math.floor(endRate);
   }
 
-  if (
+  console.log(ratingFilterInput.value);
+  console.log(startRate);
+  console.log(endRate);
+
+  if (startRate > endRate) {
+    clearSearch();
+  } else if (
     !(
       searchInput.value === '' &&
       (ratingFilterInput.value === 'All' || (startRate === 1 && endRate === 5))
@@ -96,6 +102,9 @@ searchBtn.addEventListener('click', () => {
     if (searchedBooks.length) currentPage = 0;
 
     clearSearchBtn.removeAttribute('disabled');
+
+    startRate = -1;
+    endRate = -1;
   }
 
   renderCurrentPage();
