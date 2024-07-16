@@ -55,31 +55,6 @@ showMaxSelect.addEventListener('change', (e) => {
   renderCurrentPage();
 });
 
-document.querySelector('#cancelDelete').addEventListener('click', () => {
-  hideElement(deleteModal);
-  backdrop.classList.remove('visible');
-  deleteId = -1;
-});
-
-document.querySelector('#confirmDelete').addEventListener('click', () => {
-  books = books.filter((book) => book.id !== deleteId);
-  if (searched)
-    searchedBooks = searchedBooks.filter(
-      (searchedBook) => searchedBook.id !== deleteId
-    );
-  localStorage.setItem('books', JSON.stringify(books));
-  document.querySelector(`#book${deleteId}`).remove();
-
-  if (!books.length) displayElement(document.querySelector('#entry-text'));
-
-  renderCurrentPage();
-
-  hideElement(deleteModal);
-  backdrop.classList.remove('visible');
-
-  deleteId = -1;
-});
-
 searchBtn.addEventListener('click', () => {
   if (ratingFilterInput.value === '') ratingFilterInput.value = 'All';
 
@@ -127,16 +102,32 @@ searchBtn.addEventListener('click', () => {
   clearInputs();
 });
 
-clearSearchBtn.addEventListener('click', () => {
-  if (searched) {
-    searchedBooks = [];
-    searched = false;
-    clearSearchBtn.setAttribute('disabled', 'disabled');
-    startRate = -1;
-    endRate = -1;
-    renderCurrentPage();
-  }
-});
+clearSearchBtn.addEventListener('click', clearSearch);
+
+const cancelDelete = () => {
+  hideElement(deleteModal);
+  backdrop.classList.remove('visible');
+  deleteId = -1;
+};
+
+const confirmDelete = () => {
+  books = books.filter((book) => book.id !== deleteId);
+  if (searched)
+    searchedBooks = searchedBooks.filter(
+      (searchedBook) => searchedBook.id !== deleteId
+    );
+  localStorage.setItem('books', JSON.stringify(books));
+  document.querySelector(`#book${deleteId}`).remove();
+
+  if (!books.length) displayElement(document.querySelector('#entry-text'));
+
+  renderCurrentPage();
+
+  hideElement(deleteModal);
+  backdrop.classList.remove('visible');
+
+  deleteId = -1;
+};
 
 const addBookModal = () => {
   addModal.classList.add('visible');
@@ -218,12 +209,7 @@ const deleteBooks = () => {
     hideElement(deleteAllModal);
     backdrop.classList.remove('visible');
 
-    currentPage = 0;
-
-    searched = false;
-    rate = -1;
-    startRate = -1;
-    endRate = -1;
+    clearSearch();
 
     renderCurrentPage();
   });
@@ -319,7 +305,6 @@ const renderCurrentPage = () => {
     searchInput.removeAttribute('disabled');
     ratingFilterInput.removeAttribute('disabled');
     searchBtn.removeAttribute('disabled');
-    clearSearchBtn.removeAttribute('disabled');
     deleteBooksBtn.removeAttribute('disabled');
   }
 
@@ -375,6 +360,19 @@ const updatePages = () => {
 const isRatingInRange = (rate, startRate = 1, endRate = 5) => {
   return rate >= startRate && rate <= endRate;
 };
+
+function clearSearch() {
+  if (searched) {
+    searchedBooks = [];
+    searched = false;
+    clearSearchBtn.setAttribute('disabled', 'disabled');
+    rate = -1;
+    currentPage = 0;
+    startRate = -1;
+    endRate = -1;
+    renderCurrentPage();
+  }
+}
 
 const loadInitialData = (count = 7) => {
   const data = [];
