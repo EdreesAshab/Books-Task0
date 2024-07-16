@@ -72,6 +72,30 @@
 
     <header>
       <h1>Favorite Books</h1>
+      <div>
+        <input
+          type="text"
+          id="searchInput"
+          name="searchInput"
+          placeholder="Search for a book..."
+        />
+        <input
+          type="text"
+          list="ratingFilter"
+          id="ratingFilterInput"
+          placeholder="Rating (1-5 for range)"
+        />
+        <datalist name="ratingFilter" id="ratingFilter">
+          <option value="All">All</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </datalist>
+        <button id="searchBtn">Search</button>
+        <button id="clearSearchBtn">Clear search</button>
+      </div>
       <button id="deleteBooks" onclick="delclick()">Delete Books</button>
       <button id="addBook" onclick="btnclick()">ADD BOOK</button>
     </header>
