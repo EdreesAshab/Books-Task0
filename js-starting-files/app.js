@@ -24,6 +24,10 @@ let deleteId = -1;
 
 let searched = false;
 
+let rate = -1;
+let startRate = -1;
+let endRate = -1;
+
 window.onload = () => {
   if (localStorage.getItem('books') !== null)
     books = JSON.parse(localStorage.getItem('books'));
@@ -77,8 +81,7 @@ document.querySelector('#confirmDelete').addEventListener('click', () => {
 });
 
 searchBtn.addEventListener('click', () => {
-  let startRate = 1;
-  let endRate = 5;
+  if (ratingFilterInput.value === '') ratingFilterInput.value = 'All';
 
   if (
     ratingFilterInput.value.includes('-') &&
@@ -99,12 +102,10 @@ searchBtn.addEventListener('click', () => {
       (ratingFilterInput.value === 'All' || (startRate === 1 && endRate === 5))
     )
   ) {
-    console.log(startRate);
-    console.log(endRate);
-    console.log(ratingFilterInput.value);
-
     searchedBooks = [];
     searched = true;
+
+    rate = ratingFilterInput.value;
 
     books.forEach((book) => {
       if (
@@ -112,40 +113,43 @@ searchBtn.addEventListener('click', () => {
           book.title.toLowerCase().includes(searchInput.value.toLowerCase())) &&
         (ratingFilterInput.value === 'All' ||
           book.rating == ratingFilterInput.value ||
-          isRatingInRange(startRate, endRate, book.rating))
+          isRatingInRange(book.rating, startRate, endRate))
       )
         searchedBooks.push(book);
     });
 
     if (searchedBooks.length) currentPage = 0;
 
-    renderCurrentPage();
-
-    clearInputs();
+    clearSearchBtn.removeAttribute('disabled');
   }
+
+  renderCurrentPage();
+  clearInputs();
 });
 
 clearSearchBtn.addEventListener('click', () => {
   if (searched) {
-    console.log('cleared search!!');
     searchedBooks = [];
     searched = false;
+    clearSearchBtn.setAttribute('disabled', 'disabled');
+    startRate = -1;
+    endRate = -1;
     renderCurrentPage();
   }
 });
 
-const btnclick = () => {
+const addBookModal = () => {
   addModal.classList.add('visible');
   backdrop.classList.add('visible');
 };
 
-const btnclose = () => {
+const closeAdd = () => {
   addModal.classList.remove('visible');
   backdrop.classList.remove('visible');
   clearInputs();
 };
 
-const additem = () => {
+const addBook = () => {
   const title = document.querySelector('#title').value;
   let imageUrl = document.querySelector('#image-url').value;
   const rating = document.querySelector('#rating').value;
@@ -166,6 +170,19 @@ const additem = () => {
 
     books.push(newBook);
 
+    if (
+      searched &&
+      (searchInput.value === '' ||
+        newBook.title
+          .toLowerCase()
+          .includes(searchInput.value.toLowerCase())) &&
+      (rate === 'All' ||
+        newBook.rating == rate ||
+        isRatingInRange(newBook.rating, startRate, endRate))
+    ) {
+      searchedBooks.push(newBook);
+    }
+
     localStorage.setItem('books', JSON.stringify(books));
 
     updatePages();
@@ -176,13 +193,13 @@ const additem = () => {
 
     renderCurrentPage();
 
-    btnclose();
+    closeAdd();
 
     clearInputs();
   } else alert(isValid);
 };
 
-const delclick = () => {
+const deleteBooks = () => {
   displayElement(deleteAllModal);
   backdrop.classList.add('visible');
 
@@ -204,6 +221,9 @@ const delclick = () => {
     currentPage = 0;
 
     searched = false;
+    rate = -1;
+    startRate = -1;
+    endRate = -1;
 
     renderCurrentPage();
   });
@@ -289,6 +309,20 @@ const buildBookElement = ({ id, title, imageUrl, rating }) => {
 };
 
 const renderCurrentPage = () => {
+  if (!books.length) {
+    searchInput.setAttribute('disabled', 'disabled');
+    ratingFilterInput.setAttribute('disabled', 'disabled');
+    searchBtn.setAttribute('disabled', 'disabled');
+    clearSearchBtn.setAttribute('disabled', 'disabled');
+    deleteBooksBtn.setAttribute('disabled', 'disabled');
+  } else {
+    searchInput.removeAttribute('disabled');
+    ratingFilterInput.removeAttribute('disabled');
+    searchBtn.removeAttribute('disabled');
+    clearSearchBtn.removeAttribute('disabled');
+    deleteBooksBtn.removeAttribute('disabled');
+  }
+
   document.querySelectorAll('.book-element').forEach((el) => {
     el.remove();
   });
@@ -299,7 +333,6 @@ const renderCurrentPage = () => {
   const renderBooks = searched ? searchedBooks : books;
 
   if (renderBooks.length) {
-    deleteBooksBtn.removeAttribute('disabled');
     hideElement(document.querySelector('#entry-text'));
     displayElement(showMaxSelectDiv);
 
@@ -319,12 +352,10 @@ const renderCurrentPage = () => {
   } else {
     displayElement(document.querySelector('#entry-text'));
     hideElement(showMaxSelectDiv);
-    deleteBooksBtn.setAttribute('disabled', 'disabled');
   }
 };
 
 const updatePages = () => {
-  console.log(currentPage);
   const renderBooks = searched ? searchedBooks : books;
   for (let i = 0; i < Math.ceil(renderBooks.length / showMaxBook); i++) {
     const pageBtn = document.createElement('button');
@@ -341,7 +372,7 @@ const updatePages = () => {
   }
 };
 
-const isRatingInRange = (startRate, endRate, rate) => {
+const isRatingInRange = (rate, startRate = 1, endRate = 5) => {
   return rate >= startRate && rate <= endRate;
 };
 

@@ -36,10 +36,10 @@
         />
       </div>
       <div class="modal__actions">
-        <button id="cancel" onclick="btnclose()" class="btn btn--passive">
+        <button id="cancel" onclick="closeAdd()" class="btn btn--passive">
           Cancel
         </button>
-        <button id="Add" class="btn btn--success" onclick="additem()">
+        <button id="Add" class="btn btn--success" onclick="addBook()">
           Add
         </button>
       </div>
@@ -94,10 +94,10 @@
           <option value="5">5</option>
         </datalist>
         <button id="searchBtn">Search</button>
-        <button id="clearSearchBtn">Clear search</button>
+        <button id="clearSearchBtn" disabled>Clear search</button>
       </div>
-      <button id="deleteBooks" onclick="delclick()">Delete Books</button>
-      <button id="addBook" onclick="btnclick()">ADD BOOK</button>
+      <button id="deleteBooks" onclick="deleteBooks()">Delete Books</button>
+      <button id="addBook" onclick="addBookModal()">ADD BOOK</button>
     </header>
 
     <main>
