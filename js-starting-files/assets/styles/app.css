@@ -41,11 +41,18 @@ header button {
   cursor: pointer;
 }
 
-header button:hover,
-header button:active {
+header button:hover:enabled,
+header button:active:enabled {
   background: #f3cc4b;
   border-color: #f3cc4b;
   color: #995200;
+}
+
+header button:disabled {
+  background: #c2b794;
+  border-color: #f3cc4b;
+  color: #995200;
+  cursor: default;
 }
 
 label {

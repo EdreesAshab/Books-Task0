@@ -51,8 +51,22 @@
         undone!
       </p>
       <div class="modal__actions">
-        <button class="btn btn--passive">No (Cancel)</button>
-        <button class="btn btn--danger">Yes</button>
+        <button class="btn btn--passive" id="cancelDelete">No (Cancel)</button>
+        <button class="btn btn--danger" id="confirmDelete">Yes</button>
+      </div>
+    </div>
+
+    <div class="modal" id="deleteAll-modal">
+      <h2 class="modal__title">Are you sure?</h2>
+      <p class="modal__content">
+        Are you sure you want to delete ALL items? This action can't be made
+        undone!
+      </p>
+      <div class="modal__actions">
+        <button class="btn btn--passive" id="cancelDeleteAll">
+          No (Cancel)
+        </button>
+        <button class="btn btn--danger" id="confirmDeleteAll">Yes</button>
       </div>
     </div>
 

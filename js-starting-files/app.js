@@ -2,6 +2,8 @@ const addModal = document.querySelector('.modal');
 const backdrop = document.querySelector('#backdrop');
 const bookList = document.querySelector('#book-list');
 const deleteModal = document.querySelector('#delete-modal');
+const deleteAllModal = document.querySelector('#deleteAll-modal');
+const deleteBooksBtn = document.querySelector('#deleteBooks');
 const paginationDiv = document.querySelector('#pagination');
 const pages = document.querySelector('#pages');
 const showMaxSelect = document.querySelector('#showMaxSelect');
@@ -10,15 +12,10 @@ const showMaxSelectDiv = document.querySelector('#showMaxSelectDiv');
 let books = [];
 let bookId = 0;
 
-let paginations = [
-  {
-    id: 1,
-    bookIds: [],
-  },
-];
-
 let showMaxBook = showMaxSelect.value;
 let currentPage = 0;
+
+let deleteId = -1;
 
 window.onload = () => {
   if (localStorage.getItem('books') !== null)
@@ -32,7 +29,10 @@ window.onload = () => {
     updatePages();
 
     renderCurrentPage();
-  } else hideElement(showMaxSelectDiv);
+  } else {
+    deleteBooksBtn.setAttribute('disabled', 'disabled');
+    hideElement(showMaxSelectDiv);
+  }
 };
 
 showMaxSelect.addEventListener('change', (e) => {
@@ -40,6 +40,27 @@ showMaxSelect.addEventListener('change', (e) => {
   currentPage = 0;
   updatePages();
   renderCurrentPage();
+});
+
+document.querySelector('#cancelDelete').addEventListener('click', () => {
+  hideElement(deleteModal);
+  backdrop.classList.remove('visible');
+  deleteId = -1;
+});
+
+document.querySelector('#confirmDelete').addEventListener('click', () => {
+  books = books.filter((book) => book.id !== deleteId);
+  localStorage.setItem('books', JSON.stringify(books));
+  document.querySelector(`#book${deleteId}`).remove();
+
+  if (!books.length) displayElement(document.querySelector('#entry-text'));
+
+  renderCurrentPage();
+
+  hideElement(deleteModal);
+  backdrop.classList.remove('visible');
+
+  deleteId = -1;
 });
 
 const btnclick = () => {
@@ -80,9 +101,9 @@ const additem = () => {
 
     displayElement(showMaxSelectDiv);
 
-    renderCurrentPage();
-
     hideElement(document.querySelector('#entry-text'));
+
+    renderCurrentPage();
 
     btnclose();
 
@@ -91,13 +112,28 @@ const additem = () => {
 };
 
 const delclick = () => {
-  books = [];
-  document.querySelectorAll('.book-element').forEach((el) => {
-    el.remove();
-  });
-  localStorage.setItem('books', JSON.stringify(books));
+  displayElement(deleteAllModal);
+  backdrop.classList.add('visible');
 
-  renderCurrentPage();
+  document.querySelector('#cancelDeleteAll').addEventListener('click', () => {
+    hideElement(deleteAllModal);
+    backdrop.classList.remove('visible');
+  });
+
+  document.querySelector('#confirmDeleteAll').addEventListener('click', () => {
+    books = [];
+    document.querySelectorAll('.book-element').forEach((el) => {
+      el.remove();
+    });
+    localStorage.setItem('books', JSON.stringify(books));
+
+    hideElement(deleteAllModal);
+    backdrop.classList.remove('visible');
+
+    currentPage = 0;
+
+    renderCurrentPage();
+  });
 };
 
 const validateNewBook = (title, imageUrl, rating) => {
@@ -139,38 +175,17 @@ const clearInputs = () => {
 const buildBookElement = ({ id, title, imageUrl, rating }) => {
   const bookLi = document.createElement('li');
   bookLi.classList.add('book-element');
+  bookLi.setAttribute('id', `book${id}`);
   bookLi.addEventListener('mouseover', () => {
     bookLi.style.cursor = 'pointer';
   });
   bookLi.addEventListener('mouseout', () => {
     bookLi.style.cursor = 'default';
   });
-  bookLi.addEventListener('click', (e) => {
+  bookLi.addEventListener('click', () => {
     displayElement(deleteModal);
     backdrop.classList.add('visible');
-
-    deleteModal.children[2].children[0].addEventListener('click', () => {
-      hideElement(deleteModal);
-      backdrop.classList.remove('visible');
-    });
-
-    deleteModal.children[2].children[1].addEventListener(
-      'click',
-      () => {
-        books = books.filter((book) => book.id !== id);
-        localStorage.setItem('books', JSON.stringify(books));
-        bookLi.remove();
-
-        if (!books.length)
-          displayElement(document.querySelector('#entry-text'));
-
-        renderCurrentPage();
-
-        hideElement(deleteModal);
-        backdrop.classList.remove('visible');
-      },
-      { once: true }
-    );
+    deleteId = id;
   });
 
   const imageDiv = document.createElement('div');
@@ -207,6 +222,10 @@ const renderCurrentPage = () => {
   });
 
   if (books.length) {
+    deleteBooksBtn.removeAttribute('disabled');
+
+    if (books.length === showMaxBook * currentPage) currentPage--;
+
     updatePages();
 
     for (
@@ -221,6 +240,7 @@ const renderCurrentPage = () => {
   } else {
     displayElement(document.querySelector('#entry-text'));
     hideElement(showMaxSelectDiv);
+    deleteBooksBtn.setAttribute('disabled', 'disabled');
   }
 };
 
@@ -240,61 +260,18 @@ const updatePages = () => {
   }
 };
 
-const loadInitialData = () => {
-  localStorage.setItem(
-    'books',
-    JSON.stringify([
-      {
-        id: 0,
-        title: 'Book 1',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 3,
-      },
-      {
-        id: 1,
-        title: 'Book 2',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 5,
-      },
-      {
-        id: 2,
-        title: 'Book 3',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 5,
-      },
-      {
-        id: 3,
-        title: 'Book 4',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 4,
-      },
-      {
-        id: 4,
-        title: 'Book 5',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 1,
-      },
-      {
-        id: 5,
-        title: 'Book 6',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 4,
-      },
-      {
-        id: 6,
-        title: 'Book 7',
-        imageUrl:
-          'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
-        rating: 2,
-      },
-    ])
-  );
+const loadInitialData = (count = 7) => {
+  const data = [];
+  for (let i = 0; i < count; i++)
+    data.push({
+      id: i,
+      title: `Book ${i + 1}`,
+      imageUrl:
+        'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvcGYtczEyNS0wNC1tb2NrdXBfMS5qcGc.jpg',
+      rating: Math.floor(Math.random() * 5 + 1),
+    });
+
+  localStorage.setItem('books', JSON.stringify(data));
 };
 
 loadInitialData();
