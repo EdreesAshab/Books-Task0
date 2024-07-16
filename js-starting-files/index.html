@@ -91,20 +91,27 @@
           name="searchInput"
           placeholder="Search for a book..."
         />
-        <input
-          type="text"
-          list="ratingFilter"
-          id="ratingFilterInput"
-          placeholder="Rating (1:5 for range)"
-        />
-        <datalist name="ratingFilter" id="ratingFilter">
-          <option value="All">All</option>
+        <select name="ratingFilter" id="ratingFilter">
+          <option value="1-5" id="defaultRate">1-5</option>
+          <option value="1-4">1-4</option>
+          <option value="1-3">1-3</option>
+          <option value="1-2">1-2</option>
+
+          <option value="2-5">2-5</option>
+          <option value="2-4">2-4</option>
+          <option value="2-3">2-3</option>
+
+          <option value="3-5">3-5</option>
+          <option value="3-4">3-4</option>
+
+          <option value="4-5">4-5</option>
+
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
           <option value="4">4</option>
           <option value="5">5</option>
-        </datalist>
+        </select>
         <button id="searchBtn">Search</button>
         <button id="clearSearchBtn" disabled>Clear search</button>
       </div>

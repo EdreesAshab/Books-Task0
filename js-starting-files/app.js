@@ -9,7 +9,7 @@ const pages = document.querySelector('#pages');
 const showMaxSelect = document.querySelector('#showMaxSelect');
 const showMaxSelectDiv = document.querySelector('#showMaxSelectDiv');
 const searchInput = document.querySelector('#searchInput');
-const ratingFilterInput = document.querySelector('#ratingFilterInput');
+const ratingFilter = document.querySelector('#ratingFilter');
 const searchBtn = document.querySelector('#searchBtn');
 const clearSearchBtn = document.querySelector('#clearSearchBtn');
 
@@ -24,7 +24,6 @@ let deleteId = -1;
 
 let searched = false;
 
-let rate = -1;
 let startRate = -1;
 let endRate = -1;
 
@@ -56,44 +55,23 @@ showMaxSelect.addEventListener('change', (e) => {
 });
 
 searchBtn.addEventListener('click', () => {
-  if (ratingFilterInput.value === '') ratingFilterInput.value = 'All';
+  if (ratingFilter.value.includes('-'))
+    [startRate, endRate] = ratingFilter.value.split('-');
 
-  if (
-    ratingFilterInput.value.includes(':') &&
-    ratingFilterInput.value.split(':').length === 2
-  ) {
-    [startRate, endRate] = ratingFilterInput.value.split(':');
-
-    if (isNaN(startRate) || startRate < 1) startRate = 1;
-    if (isNaN(endRate) || endRate > 5) endRate = 5;
-
-    startRate = Math.floor(startRate);
-    endRate = Math.floor(endRate);
-  }
-
-  console.log(ratingFilterInput.value);
+  console.log(ratingFilter.value);
   console.log(startRate);
   console.log(endRate);
 
-  if (startRate > endRate) {
-    clearSearch();
-  } else if (
-    !(
-      searchInput.value === '' &&
-      (ratingFilterInput.value === 'All' || (startRate === 1 && endRate === 5))
-    )
-  ) {
+  if (!(searchInput.value === '' && startRate === 1 && endRate === 5)) {
     searchedBooks = [];
     searched = true;
-
-    rate = ratingFilterInput.value;
 
     books.forEach((book) => {
       if (
         (searchInput.value === '' ||
           book.title.toLowerCase().includes(searchInput.value.toLowerCase())) &&
-        (ratingFilterInput.value === 'All' ||
-          book.rating == ratingFilterInput.value ||
+        (ratingFilter.value === '1-5' ||
+          book.rating == ratingFilter.value ||
           isRatingInRange(book.rating, startRate, endRate))
       )
         searchedBooks.push(book);
@@ -176,8 +154,8 @@ const addBook = () => {
         newBook.title
           .toLowerCase()
           .includes(searchInput.value.toLowerCase())) &&
-      (rate === 'All' ||
-        newBook.rating == rate ||
+      (ratingFilter.value === '1-5' ||
+        newBook.rating == ratingFilter.value ||
         isRatingInRange(newBook.rating, startRate, endRate))
     ) {
       searchedBooks.push(newBook);
@@ -259,7 +237,7 @@ const clearInputs = () => {
   document.querySelector('#image-url').value = '';
   document.querySelector('#rating').value = '';
   searchInput.value = '';
-  ratingFilterInput.value = '';
+  document.querySelector('#defaultRate').selected = true;
 };
 
 const buildBookElement = ({ id, title, imageUrl, rating }) => {
@@ -306,13 +284,13 @@ const buildBookElement = ({ id, title, imageUrl, rating }) => {
 const renderCurrentPage = () => {
   if (!books.length) {
     searchInput.setAttribute('disabled', 'disabled');
-    ratingFilterInput.setAttribute('disabled', 'disabled');
+    ratingFilter.setAttribute('disabled', 'disabled');
     searchBtn.setAttribute('disabled', 'disabled');
     clearSearchBtn.setAttribute('disabled', 'disabled');
     deleteBooksBtn.setAttribute('disabled', 'disabled');
   } else {
     searchInput.removeAttribute('disabled');
-    ratingFilterInput.removeAttribute('disabled');
+    ratingFilter.removeAttribute('disabled');
     searchBtn.removeAttribute('disabled');
     deleteBooksBtn.removeAttribute('disabled');
   }
@@ -375,7 +353,6 @@ function clearSearch() {
     searchedBooks = [];
     searched = false;
     clearSearchBtn.setAttribute('disabled', 'disabled');
-    rate = -1;
     currentPage = 0;
     startRate = -1;
     endRate = -1;
