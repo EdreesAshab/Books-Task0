@@ -90,8 +90,9 @@
           id="searchInput"
           name="searchInput"
           placeholder="Search for a book..."
+          disabled
         />
-        <select name="ratingFilter" id="ratingFilter">
+        <select name="ratingFilter" id="ratingFilter" disabled>
           <option value="1-5" id="defaultRate">1-5</option>
           <option value="1-4">1-4</option>
           <option value="1-3">1-3</option>
@@ -112,10 +113,12 @@
           <option value="4">4</option>
           <option value="5">5</option>
         </select>
-        <button id="searchBtn">Search</button>
+        <button id="searchBtn" disabled>Search</button>
         <button id="clearSearchBtn" disabled>Clear search</button>
       </div>
-      <button id="deleteBooks" onclick="deleteBooks()">Delete Books</button>
+      <button id="deleteBooks" onclick="deleteBooks()" disabled>
+        Delete Books
+      </button>
       <button id="addBook" onclick="addBookModal()">ADD BOOK</button>
     </header>
 

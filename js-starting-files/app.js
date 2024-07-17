@@ -1,5 +1,6 @@
 const addModal = document.querySelector('.modal');
 const backdrop = document.querySelector('#backdrop');
+const entryText = document.querySelector('#entry-text');
 const bookList = document.querySelector('#book-list');
 const deleteModal = document.querySelector('#delete-modal');
 const deleteAllModal = document.querySelector('#deleteAll-modal');
@@ -35,7 +36,7 @@ window.onload = () => {
   clearInputs();
 
   if (books.length) {
-    hideElement(document.querySelector('#entry-text'));
+    hideElement(entryText);
     bookId = books[books.length - 1].id + 1;
 
     updatePages();
@@ -57,10 +58,6 @@ showMaxSelect.addEventListener('change', (e) => {
 searchBtn.addEventListener('click', () => {
   if (ratingFilter.value.includes('-'))
     [startRate, endRate] = ratingFilter.value.split('-');
-
-  console.log(ratingFilter.value);
-  console.log(startRate);
-  console.log(endRate);
 
   if (!(searchInput.value === '' && startRate === 1 && endRate === 5)) {
     searchedBooks = [];
@@ -106,7 +103,7 @@ const confirmDelete = () => {
   localStorage.setItem('books', JSON.stringify(books));
   document.querySelector(`#book${deleteId}`).remove();
 
-  if (!books.length) displayElement(document.querySelector('#entry-text'));
+  if (!books.length) displayElement(entryText);
 
   renderCurrentPage();
 
@@ -138,7 +135,7 @@ const addBook = () => {
 
   const isValid = validateNewBook(title, imageUrl, rating);
 
-  if (isValid !== '') {
+  if (isValid === '') {
     const newBook = {
       id: bookId++,
       title,
@@ -167,7 +164,7 @@ const addBook = () => {
 
     displayElement(showMaxSelectDiv);
 
-    hideElement(document.querySelector('#entry-text'));
+    hideElement(entryText);
 
     renderCurrentPage();
 
@@ -305,7 +302,7 @@ const renderCurrentPage = () => {
   const renderBooks = searched ? searchedBooks : books;
 
   if (renderBooks.length) {
-    hideElement(document.querySelector('#entry-text'));
+    hideElement(entryText);
     displayElement(showMaxSelectDiv);
 
     if (renderBooks.length === showMaxBook * currentPage) currentPage--;
@@ -322,7 +319,7 @@ const renderCurrentPage = () => {
       );
     }
   } else {
-    displayElement(document.querySelector('#entry-text'));
+    displayElement(entryText);
     hideElement(showMaxSelectDiv);
   }
 };
@@ -374,4 +371,4 @@ const loadInitialData = (count = 7) => {
   localStorage.setItem('books', JSON.stringify(data));
 };
 
-loadInitialData();
+// loadInitialData();
