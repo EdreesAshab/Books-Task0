@@ -138,7 +138,7 @@ const addBook = () => {
 
   const isValid = validateNewBook(title, imageUrl, rating);
 
-  if (isValid === true) {
+  if (isValid !== '') {
     const newBook = {
       id: bookId++,
       title,
@@ -208,11 +208,11 @@ const validateNewBook = (title, imageUrl, rating) => {
   else if (rating < 1 || rating > 5)
     return 'Rating should be between 1 and 5 inclusive';
 
-  return true;
+  return '';
 };
 
 const isValidUrl = (urlString) => {
-  var urlPattern = new RegExp(
+  const urlPattern = new RegExp(
     '^(https?:\\/\\/)?' + // validate protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // validate domain name
       '((\\d{1,3}\\.){3}\\d{1,3}))' + // validate OR ip (v4) address
