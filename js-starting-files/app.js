@@ -177,26 +177,26 @@ const addBook = () => {
 const deleteBooks = () => {
   displayElement(deleteAllModal);
   backdrop.classList.add('visible');
+};
 
-  document.querySelector('#cancelDeleteAll').addEventListener('click', () => {
-    hideElement(deleteAllModal);
-    backdrop.classList.remove('visible');
+const cancelDeleteAll = () => {
+  hideElement(deleteAllModal);
+  backdrop.classList.remove('visible');
+};
+
+const confirmDeleteAll = () => {
+  books = [];
+  document.querySelectorAll('.book-element').forEach((el) => {
+    el.remove();
   });
+  localStorage.setItem('books', JSON.stringify(books));
 
-  document.querySelector('#confirmDeleteAll').addEventListener('click', () => {
-    books = [];
-    document.querySelectorAll('.book-element').forEach((el) => {
-      el.remove();
-    });
-    localStorage.setItem('books', JSON.stringify(books));
+  hideElement(deleteAllModal);
+  backdrop.classList.remove('visible');
 
-    hideElement(deleteAllModal);
-    backdrop.classList.remove('visible');
+  clearSearch();
 
-    clearSearch();
-
-    renderCurrentPage();
-  });
+  renderCurrentPage();
 };
 
 const validateNewBook = (title, imageUrl, rating) => {
